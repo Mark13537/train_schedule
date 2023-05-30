@@ -1,0 +1,6 @@
+https://www.irctc.co.in/online-charts/   base api
+
+https://www.irctc.co.in/online-charts/api/trainComposition 1st step with payload {trainNo: "20907", jDate: "2023-05-27", boardingStation: "BVI"}
+
+https://www.irctc.co.in/online-charts/api/vacantBerth final step with payload {"trainNo":"20907","boardingStation":"BVI","remoteStation":"DDR","trainSourceStation":"DDR","jDate":"2023-05-27","cls":"SL","chartType":2}
+{"trainNo":"12925","boardingStation":"BVI","remoteStation":"MMCT","trainSourceStation":"MMCT","jDate":"2023-05-28","cls":"SL","chartType":2}
