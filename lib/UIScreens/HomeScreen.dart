@@ -85,7 +85,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     String url =
         "${FlavorConfig.instance.url()}www.irctc.co.in/online-charts/api/vacantBerth";
-    // Sayaji number
+    // Paschim number
     // var body = json.encode({
     //   "trainNo": "12925",
     //   "boardingStation": "BVI",
@@ -143,8 +143,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     break;
                   }
                 }
+                if (searchResultModel!.vbd![mainIndex].to == "ADH" ||
+                    searchResultModel!.vbd![mainIndex].to == "BVI") {
+                  seatFoundStartingBetweenBandarOrVirar = false;
+                }
                 if (!seatFoundStartingBetweenBandarOrVirar) {
-                  //print("Val removed");
                   indexToBeRemoved.add(mainIndex);
                 }
               }
