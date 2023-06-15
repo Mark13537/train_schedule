@@ -307,6 +307,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Container(
       padding: const EdgeInsets.only(bottom: 5, left: 5, right: 5, top: 5),
       margin: const EdgeInsets.only(bottom: 0, left: 10, right: 10, top: 10),
+      color: getBgColorForRow(vbd.to!),
       decoration: BoxDecoration(
           border: Border.all(color: Colors.grey),
           boxShadow: const [
@@ -346,5 +347,15 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
     );
+  }
+
+  Color getBgColorForRow(String stationCode) {
+    if (stationCode == "VR") {
+      return Colors.redAccent;
+    }
+    if (stationCode == "PLG" || stationCode == "SAH") {
+      return Colors.yellowAccent;
+    }
+    return Colors.greenAccent;
   }
 }
