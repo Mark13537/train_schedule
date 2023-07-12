@@ -27,3 +27,14 @@ Map stationCodeSequence = {
   7: "BOR",
   8: "DRD"
 };
+
+Map beathNumberAndType = {
+  1: "L",
+  2: "M",
+  3: "U",
+  4: "L",
+  5: "M",
+  6: "U",
+  7: "R",
+  8: "P"
+};

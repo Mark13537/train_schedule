@@ -92,9 +92,9 @@ TextStyle boldTxtStyle = TextStyle(
   color: BLACK_TEXT_COLOR,
 );
 
-TextStyle extraLightTxtStyle = TextStyle(
+TextStyle extraSmallTxtStyle = TextStyle(
   fontSize: LayoutHelper.instance.fontSize - 5,
-  color: Colors.grey[500],
+  color: COLOR_PRIMARY_DARK,
 );
 
 String disclamerText = "";

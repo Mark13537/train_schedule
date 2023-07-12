@@ -150,13 +150,22 @@ class _HomeScreenState extends State<HomeScreen> {
                 if (!seatFoundStartingBetweenBandarOrVirar) {
                   indexToBeRemoved.add(mainIndex);
                 }
+                // data might be null, empty string or whitespace
+                if (searchResultModel!.vbd![mainIndex].berthCode == null ||
+                    searchResultModel!.vbd![mainIndex].berthCode!.isEmpty ||
+                    searchResultModel!.vbd![mainIndex].berthCode! == " ") {
+                  searchResultModel!.vbd![mainIndex].berthCode =
+                      calculateBerthCode(
+                          searchResultModel!.vbd![mainIndex].berthNumber!);
+                }
               }
               for (int removeIndex = indexToBeRemoved.length - 1;
                   removeIndex >= 0;
                   removeIndex--) {
                 searchResultModel!.vbd!.removeAt(indexToBeRemoved[removeIndex]);
               }
-              // sixfigure code to look and check
+
+              // sixfigure code to look and check to sort all seat numbers in accending
               for (var list in searchResultModel!.vbd!) {
                 if (coachWiseMap[list.coachName] == null) {
                   coachWiseMap[list.coachName!] = [];
@@ -272,7 +281,7 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Text(
-          "Please try again after some time, charts might not have been prepared!\n\nHave some food, catch up with friends ;-)",
+          "Please try again after some time, charts might not have been prepared!\n\nHave some food 🍕 , catch up with friends! 😌\n\n Usual time is around 7:15 pm or 7.30 pm",
           style: medTxtStyleBoldPriBlue,
           textAlign: TextAlign.center,
         ),
@@ -295,7 +304,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Padding(
           padding: const EdgeInsets.all(10.0),
           child: Text(
-            "No Seats here :( ",
+            "No Seats here 💔",
             style: medTxtStyleSemiBoldBlack,
           ),
         ),
@@ -307,8 +316,9 @@ class _HomeScreenState extends State<HomeScreen> {
     return Container(
       padding: const EdgeInsets.only(bottom: 5, left: 5, right: 5, top: 5),
       margin: const EdgeInsets.only(bottom: 0, left: 10, right: 10, top: 10),
-      color: getBgColorForRow(vbd.to!),
+      //color: getBgColorForRow(vbd.to!),
       decoration: BoxDecoration(
+          color: getBgColorForRow(vbd.to!),
           border: Border.all(color: Colors.grey),
           boxShadow: const [
             BoxShadow(
@@ -316,8 +326,7 @@ class _HomeScreenState extends State<HomeScreen> {
               blurRadius: 5.0,
             ),
           ],
-          color: COLOR_WHITE,
-          borderRadius: const BorderRadius.all(Radius.circular(10.0))),
+          borderRadius: BorderRadius.circular(15.0)),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
@@ -341,7 +350,9 @@ class _HomeScreenState extends State<HomeScreen> {
             style: smallTxtStyleBoldPriBlue,
           ),
           Text(
-            berthCodes[vbd.berthCode] ?? "Not mentioned",
+            vbd.berthCode!.endsWith("*")
+                ? vbd.berthCode
+                : berthCodes[vbd.berthCode] ?? "Not mentioned",
             style: smallTxtStyleBoldBlue,
           )
         ],
@@ -357,5 +368,18 @@ class _HomeScreenState extends State<HomeScreen> {
       return Colors.yellowAccent;
     }
     return Colors.greenAccent;
+  }
+
+  String calculateBerthCode(int berthNumber) {
+    int globalCount = 1;
+    int berthCodeNumber = 1;
+    while (globalCount != berthNumber) {
+      globalCount++;
+      berthCodeNumber++;
+      if (berthCodeNumber > 8) {
+        berthCodeNumber = 1;
+      }
+    }
+    return berthCodes[beathNumberAndType[berthCodeNumber]] + " *";
   }
 }
