@@ -29,6 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Map<String, List<Vbd>> coachWiseMap = {};
   DateTime now = DateTime.now();
   String currentDate = "";
+  int chartType = 2;
 
   List<Widget> availableCoach = [
     const Text('S1'),
@@ -64,18 +65,16 @@ class _HomeScreenState extends State<HomeScreen> {
     return SafeArea(
         child: Scaffold(
       resizeToAvoidBottomInset: false,
-      body: RefreshIndicator(
-          child: Container(
-            margin: const EdgeInsets.all(5),
-            child: Column(
-              children: [
-                !_isDialogShowing
-                    ? Expanded(child: mainBlock())
-                    : buildDataLoder()
-              ],
-            ),
-          ),
-          onRefresh: () => Future.sync(() => getSeatInfo())),
+      body: Container(
+        margin: const EdgeInsets.all(5),
+        child: Column(
+          children: [
+            !_isDialogShowing
+                ? Expanded(child: mainBlock())
+                : buildDataLoder("Cooking fresh data...")
+          ],
+        ),
+      ),
     ));
   }
 
@@ -104,7 +103,7 @@ class _HomeScreenState extends State<HomeScreen> {
       "trainSourceStation": "BDTS",
       "jDate": currentDate,
       "cls": "SL",
-      "chartType": 2
+      "chartType": chartType
     });
 
     try {
@@ -183,6 +182,9 @@ class _HomeScreenState extends State<HomeScreen> {
               //   print("${searchResultModel!.vbd![printIndex].from}");
               //    print("${searchResultModel!.vbd![printIndex].berthNumber}");
               // }
+            } else {
+              chartType = 1;
+              getSeatInfo();
             }
           });
         }
@@ -194,8 +196,10 @@ class _HomeScreenState extends State<HomeScreen> {
         }
         showInFlushBar(
           context,
-          "Something went wrong else.",
+          "Something went wrong. please wait.",
         );
+        chartType = 1;
+        getSeatInfo();
       }
     } on DioError catch (e) {
       if (_isDialogShowing) {
@@ -205,12 +209,12 @@ class _HomeScreenState extends State<HomeScreen> {
       }
       showInFlushBar(
         context,
-        "Something went wrong.",
+        "Something went wrong. Please wait.",
       );
     }
   }
 
-  Center buildDataLoder() {
+  Center buildDataLoder(String message) {
     return Center(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -223,7 +227,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           const SizedBox(height: 10),
           Text(
-            "Getting data",
+            message,
             style: semiBoldTxtStyle,
           ),
         ],
@@ -268,8 +272,19 @@ class _HomeScreenState extends State<HomeScreen> {
         const SizedBox(
           height: 20,
         ),
+        chartType == 2
+            ? const Text("Showing fresh data")
+            : Text(
+                "Showing 1st chart, some seats might have been booked. Hope you select the vacant seat.\nBest of luck 🍀",
+                textAlign: TextAlign.center,
+              ),
+        const SizedBox(
+          height: 10,
+        ),
         Text(
-            "Total Seats in $selectCoachNo are ${coachWiseMap[selectCoachNo] == null ? 0 : coachWiseMap[selectCoachNo]!.length}"),
+          "Total Seats in $selectCoachNo are ${coachWiseMap[selectCoachNo] == null ? 0 : coachWiseMap[selectCoachNo]!.length}",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         listOfSeats()
       ],
     );
@@ -280,11 +295,17 @@ class _HomeScreenState extends State<HomeScreen> {
       return Expanded(
           child: Padding(
         padding: const EdgeInsets.all(10.0),
-        child: Text(
-          "Please try again after some time, charts might not have been prepared!\n\nHave some food 🍕 , catch up with friends! 😌\n\n Usual time is around 7:15 pm or 7.30 pm",
-          style: medTxtStyleBoldPriBlue,
-          textAlign: TextAlign.center,
-        ),
+        child: isItHighTime()
+            ? Text(
+                "I think there is someting wrong.\n You're on your own, best on luck 😂",
+                style: medTxtStyleBoldPriBlue,
+                textAlign: TextAlign.center,
+              )
+            : Text(
+                "Please try again after some time, charts might not have been prepared!\n\nHave some food 🍕 , catch up with friends! 😌\n\n Usual time is around 7:15 pm or 7.30 pm",
+                style: medTxtStyleBoldPriBlue,
+                textAlign: TextAlign.center,
+              ),
       ));
     }
     if (coachWiseMap[selectCoachNo] == null
@@ -304,7 +325,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Padding(
           padding: const EdgeInsets.all(10.0),
           child: Text(
-            "No Seats here 💔",
+            "No Seats in this coach 💔",
             style: medTxtStyleSemiBoldBlack,
           ),
         ),
@@ -381,5 +402,18 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     }
     return berthCodes[beathNumberAndType[berthCodeNumber]] + " *";
+  }
+
+  bool isItHighTime() {
+    DateTime currentTime = DateTime.now();
+    print(currentTime);
+    DateTime timeLine =
+        DateTime.now().copyWith(hour: 19, minute: 45, second: 0);
+    print(timeLine);
+    if (currentTime.isBefore(timeLine)) {
+      return false;
+    } else {
+      return true;
+    }
   }
 }
