@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "112944617019",
+    "project_id": "lokshakti-ae2d5",
+    "storage_bucket": "lokshakti-ae2d5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:112944617019:android:7ee4c09c6d543248fc2e1e",
+        "android_client_info": {
+          "package_name": "com.example.train_schedule"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "112944617019-emdnklcdop6ves2auk668phhqlfb1c2o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAjFOvlDAOHtuQ0A5vqTt2G6uuKJK9ES1o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "112944617019-emdnklcdop6ves2auk668phhqlfb1c2o.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

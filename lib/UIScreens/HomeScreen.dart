@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
@@ -106,6 +107,7 @@ class _HomeScreenState extends State<HomeScreen> {
       "chartType": chartType
     });
 
+    await FirebaseAnalytics.instance.logEvent(name: "Calling API");
     try {
       final response = await getDio()
           .post(url,

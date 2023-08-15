@@ -1,3 +1,5 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:train_schedule/Helpers/AppConstants.dart';
@@ -5,7 +7,9 @@ import 'package:train_schedule/Helpers/AppConstants.dart';
 import 'Helpers/FlavouConfig.dart';
 import 'UIScreens/SplashScreen.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  var app = await Firebase.initializeApp();
   FlavorConfig(
       flavor: Flavor.DEV,
       appVersion: "1.0.0",
@@ -23,6 +27,7 @@ class MyApp extends StatelessWidget {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Lokshakti',
