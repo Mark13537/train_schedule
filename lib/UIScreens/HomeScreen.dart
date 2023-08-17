@@ -185,8 +185,12 @@ class _HomeScreenState extends State<HomeScreen> {
               //    print("${searchResultModel!.vbd![printIndex].berthNumber}");
               // }
             } else {
-              chartType = 1;
-              getSeatInfo();
+              if (chartType != 1) {
+                chartType = 1;
+                getSeatInfo();
+              } else {
+                return;
+              }
             }
           });
         }
@@ -200,8 +204,12 @@ class _HomeScreenState extends State<HomeScreen> {
           context,
           "Something went wrong. please wait.",
         );
-        chartType = 1;
-        getSeatInfo();
+        if (chartType != 1) {
+          chartType = 1;
+          getSeatInfo();
+        } else {
+          return;
+        }
       }
     } on DioError catch (e) {
       if (_isDialogShowing) {
