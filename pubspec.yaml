@@ -40,6 +40,7 @@ dependencies:
   intl:
   firebase_core: ^2.15.0
   firebase_analytics: ^10.4.4
+  equatable: ^2.0.5
 
 dev_dependencies:
   flutter_test:

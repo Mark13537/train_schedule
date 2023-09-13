@@ -178,6 +178,25 @@ class _HomeScreenState extends State<HomeScreen> {
                     .sort(((a, b) => a.berthNumber!.compareTo(b.berthNumber!)));
               });
 
+              // Logic to remove repeated seats
+              coachWiseMap.forEach((key, value) {
+                var list = value;
+
+                List<int> indexToRemove = [];
+
+                for (int i = 1; i < list.length; i++) {
+                  if (list[i] == list[i - 1]) {
+                    indexToRemove.add(i);
+                  }
+                }
+
+                for (int i = indexToRemove.length - 1; i >= 0; i--) {
+                  list.removeAt(indexToRemove[i]);
+                }
+
+                value = list;
+              });
+
               // for (int printIndex = 0;
               //     printIndex < searchResultModel!.vbd!.length;
               //     printIndex++) {

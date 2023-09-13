@@ -1,3 +1,5 @@
+import 'package:equatable/equatable.dart';
+
 class SearchResultModel {
   List<Vbd>? vbd = List.empty(growable: true);
   var error;
@@ -23,7 +25,7 @@ class SearchResultModel {
   }
 }
 
-class Vbd {
+class Vbd extends Equatable {
   String? coachName;
   String? berthCode;
   String? cabinCoupe;
@@ -66,4 +68,16 @@ class Vbd {
     data['splitNo'] = this.splitNo;
     return data;
   }
+
+  @override
+  List<Object?> get props => [
+        coachName,
+        berthCode,
+        cabinCoupe,
+        cabinCoupeNo,
+        berthNumber,
+        from,
+        to,
+        splitNo
+      ];
 }
