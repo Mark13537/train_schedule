@@ -2,11 +2,11 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:train_schedule/UIScreens/HomeScreen.dart';
+import 'package:train_schedule/UIScreens/home_screen.dart';
 
-import '../Helpers/LayoutHelper.dart';
-import '../Helpers/NetworkHelper.dart';
-import '../Helpers/ShowNotificationHelper.dart';
+import '../Helpers/layout_helper.dart';
+import '../Helpers/network_helper.dart';
+import '../Helpers/notification_helper.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -26,9 +26,9 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void goToHomeScreen() {
-    Timer(Duration(seconds: 1), () async {
+    Timer(const Duration(seconds: 1), () async {
       Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => HomeScreen()));
+          context, MaterialPageRoute(builder: (context) => const HomeScreen()));
     });
   }
 
@@ -76,7 +76,7 @@ class _SplashScreenState extends State<SplashScreen> {
               gradient: LinearGradient(
             colors: [Colors.blue.shade500, Colors.blue.shade900],
           )),
-          child: Stack(children: <Widget>[
+          child: const Stack(children: <Widget>[
             Center(
                 child: Column(mainAxisSize: MainAxisSize.min, children: [
               SizedBox(height: 10.0),
@@ -85,7 +85,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   style: TextStyle(
                     fontSize: 30.0,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFFF000000),
+                    color: Color(0xFF000000),
                   ))
             ]))
           ]),

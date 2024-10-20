@@ -1,22 +1,22 @@
 import 'package:equatable/equatable.dart';
 
-class SearchResultModel {
+class SearchResult {
   List<Vbd>? vbd = List.empty(growable: true);
   var error;
 
-  SearchResultModel({this.vbd, this.error});
+  SearchResult({this.vbd, this.error});
 
-  SearchResultModel.fromJson(Map<String, dynamic> json) {
+  SearchResult.fromJson(Map<String, dynamic> json) {
     if (json['vbd'] != null) {
       json['vbd'].forEach((v) {
-        vbd!.add(new Vbd.fromJson(v));
+        vbd!.add(Vbd.fromJson(v));
       });
     }
     error = json['error'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = Map<String, dynamic>();
     if (this.vbd != null) {
       data['vbd'] = this.vbd!.map((v) => v.toJson()).toList();
     }

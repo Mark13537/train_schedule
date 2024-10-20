@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-enum Flavor { DEV, QA, PRODUCTION }
+enum Flavor { dev, qa, prod }
 
 class FlavorConfig {
   final Flavor flavor;
@@ -46,9 +46,9 @@ class FlavorConfig {
     return url;
   }
 
-  static bool isProduction() => _instance!.flavor == Flavor.PRODUCTION;
+  static bool isProduction() => _instance!.flavor == Flavor.prod;
 
-  static bool isDevelopment() => _instance!.flavor == Flavor.DEV;
+  static bool isDevelopment() => _instance!.flavor == Flavor.dev;
 
-  static bool isQA() => _instance!.flavor == Flavor.QA;
+  static bool isQA() => _instance!.flavor == Flavor.qa;
 }

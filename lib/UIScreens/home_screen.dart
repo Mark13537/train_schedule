@@ -5,13 +5,13 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
-import 'package:train_schedule/Helpers/AppConstants.dart';
-import 'package:train_schedule/Models/SearchResultModel.dart';
+import 'package:train_schedule/Helpers/app_constants.dart';
+import 'package:train_schedule/Models/search_result.dart';
 
-import '../Helpers/FlavouConfig.dart';
-import '../Helpers/NetworkHelper.dart';
-import '../Helpers/ShowNotificationHelper.dart';
-import '../Helpers/StationConstants.dart';
+import '../Helpers/flavou_config.dart';
+import '../Helpers/network_helper.dart';
+import '../Helpers/notification_helper.dart';
+import '../Helpers/station_constants.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -23,7 +23,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   TextEditingController ipAdressController = TextEditingController()
     ..text = "Fetching Seats";
-  SearchResultModel? searchResultModel;
+  SearchResult? searchResultModel;
   bool _isDialogShowing = true;
   bool initialLoad = true;
   String selectCoachNo = "S1";
@@ -129,7 +129,7 @@ class _HomeScreenState extends State<HomeScreen> {
         if (_isDialogShowing) {
           setState(() {
             _isDialogShowing = false;
-            searchResultModel = SearchResultModel.fromJson(response.data);
+            searchResultModel = SearchResult.fromJson(response.data);
             if (searchResultModel != null &&
                 searchResultModel!.vbd != null &&
                 searchResultModel!.vbd!.isNotEmpty) {
@@ -250,7 +250,7 @@ class _HomeScreenState extends State<HomeScreen> {
         children: <Widget>[
           const SpinKitRing(
             lineWidth: 3,
-            color: COLOR_PRIMARY_DARK,
+            color: colorPrimaryDark,
             size: 40.0,
             duration: Duration(milliseconds: 1000),
           ),
@@ -303,7 +303,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         chartType == 2
             ? const Text("Showing fresh data")
-            : Text(
+            : const Text(
                 "Showing 1st chart, some seats might have been booked. Hope you select the vacant seat.\nBest of luck 🍀",
                 textAlign: TextAlign.center,
               ),
@@ -312,7 +312,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         Text(
           "Total Seats in $selectCoachNo are ${coachWiseMap[selectCoachNo] == null ? 0 : coachWiseMap[selectCoachNo]!.length}",
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         listOfSeats()
       ],
@@ -435,10 +435,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   bool isItHighTime() {
     DateTime currentTime = DateTime.now();
-    print(currentTime);
     DateTime timeLine =
         DateTime.now().copyWith(hour: 19, minute: 45, second: 0);
-    print(timeLine);
     if (currentTime.isBefore(timeLine)) {
       return false;
     } else {

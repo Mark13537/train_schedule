@@ -1,8 +1,8 @@
 import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'AppConstants.dart';
-import 'LayoutHelper.dart';
+import 'package:train_schedule/Helpers/app_constants.dart';
+import 'layout_helper.dart';
 
 void showCustomDialog(BuildContext context, String title, String message,
     Function? okPressed) async {
@@ -13,19 +13,19 @@ void showCustomDialog(BuildContext context, String title, String message,
       // return object of type Dialog
 
       return AlertDialog(
-        shape: RoundedRectangleBorder(
+        shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(10.0))),
-        title: new Text(
+        title: Text(
           title,
-          style: TextStyle(),
+          style: const TextStyle(),
         ),
-        content: new Text(
+        content: Text(
           message,
-          style: TextStyle(),
+          style: const TextStyle(),
         ),
         actions: <Widget>[
-          new TextButton(
-            child: new Text("OK", style: TextStyle()),
+          TextButton(
+            child: const Text("OK", style: TextStyle()),
             onPressed: () => okPressed,
           ),
         ],
@@ -35,32 +35,32 @@ void showCustomDialog(BuildContext context, String title, String message,
 }
 
 void showInFlushBar(BuildContext context, String value) {
-  FocusScope.of(context).requestFocus(new FocusNode());
+  FocusScope.of(context).requestFocus(FocusNode());
 
   Flushbar(
     forwardAnimationCurve: Curves.fastLinearToSlowEaseIn,
     reverseAnimationCurve: Curves.fastOutSlowIn,
-    animationDuration: Duration(milliseconds: 500),
+    animationDuration: const Duration(milliseconds: 500),
     messageText: Text(
       value,
       textAlign: TextAlign.center,
       style: TextStyle(
-        color: COLOR_PRIMARY,
+        color: colorPrimary,
         fontSize: LayoutHelper.instance.fontSize,
       ),
     ),
-    duration: Duration(seconds: 3),
-    backgroundColor: COLOR_WHITE,
-  )..show(context);
+    duration: const Duration(seconds: 3),
+    backgroundColor: colorWhite,
+  ).show(context);
 }
 
 void showInFlushBarWithColor(BuildContext context, String value, Color color) {
-  FocusScope.of(context).requestFocus(new FocusNode());
+  FocusScope.of(context).requestFocus(FocusNode());
 
   Flushbar(
     forwardAnimationCurve: Curves.fastLinearToSlowEaseIn,
     reverseAnimationCurve: Curves.fastOutSlowIn,
-    animationDuration: Duration(milliseconds: 500),
+    animationDuration: const Duration(milliseconds: 500),
     messageText: Text(
       value,
       textAlign: TextAlign.center,
@@ -69,13 +69,13 @@ void showInFlushBarWithColor(BuildContext context, String value, Color color) {
         fontSize: LayoutHelper.instance.fontSize,
       ),
     ),
-    duration: Duration(seconds: 3),
-    backgroundColor: COLOR_WHITE,
-  )..show(context);
+    duration: const Duration(seconds: 3),
+    backgroundColor: colorWhite,
+  ).show(context);
 }
 
 void showLoadingDialog(BuildContext context, String title) {
-  final spinkit = SpinKitPulse(
+  const spinkit = SpinKitPulse(
     color: Colors.white,
     size: 50.0,
     duration: Duration(milliseconds: 1000),
@@ -83,10 +83,8 @@ void showLoadingDialog(BuildContext context, String title) {
   showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (_) => WillPopScope(
-            onWillPop: () {
-              return Future.value(false);
-            },
+      builder: (_) => PopScope(
+            canPop: false,
             child: Material(
               type: MaterialType.transparency,
               child: Center(
@@ -95,7 +93,7 @@ void showLoadingDialog(BuildContext context, String title) {
                   children: <Widget>[
                     spinkit,
                     Text(
-                      "\n " + title + "...",
+                      "\n $title...",
                       style: TextStyle(
                           color: Colors.white,
                           fontFamily: 'WorkSansRegular',

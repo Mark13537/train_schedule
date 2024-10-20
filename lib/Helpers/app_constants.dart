@@ -1,14 +1,13 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'LayoutHelper.dart';
+import 'layout_helper.dart';
 
-const Color COLOR_WHITE = Color(0xFFFFFFFFF);
-const Color COLOR_PRIMARY_DARK = Color(0xFF0000FF);
-const Color COLOR_PRIMARY = Color(0xFF00B0F0);
-const Color BLACK_TEXT_COLOR = Color(0xFF000000);
-const Color COLOR_GREY = Color(0xFFE0E0E0);
-const String? SESSION_DATA = "SessionData";
-const String DASHBOARD_CONSTANT = "DashboardConstants";
+const Color colorWhite = Color(0xFFFFFFFF);
+const Color colorPrimaryDark = Color(0xFF0000FF);
+const Color colorPrimary = Color(0xFF00B0F0);
+const Color blackTextColor = Color(0xFF000000);
+const Color colorGrey = Color(0xFFE0E0E0);
+const String sessionData = "SessionData";
+const String dashboardConstant = "DashboardConstants";
 
 const TextStyle regularTxtStyleWithNoSize = TextStyle(
   color: Colors.black,
@@ -26,22 +25,22 @@ TextStyle smallTxtStyleBold = TextStyle(
 
 TextStyle smallTxtStyleBoldBlue = TextStyle(
     fontSize: LayoutHelper.instance.fontSize - 4,
-    color: COLOR_PRIMARY,
+    color: colorPrimary,
     fontWeight: FontWeight.w600);
 
 TextStyle smallTxtStyleBoldPriBlue = TextStyle(
     fontSize: LayoutHelper.instance.fontSize - 4,
-    color: COLOR_PRIMARY_DARK,
+    color: colorPrimaryDark,
     fontWeight: FontWeight.w600);
 
 TextStyle medTxtStyleBoldPriBlue = TextStyle(
     fontSize: LayoutHelper.instance.fontSize,
-    color: COLOR_PRIMARY_DARK,
+    color: colorPrimaryDark,
     fontWeight: FontWeight.w600);
 
 TextStyle regularTxtStyle = TextStyle(
   fontSize: LayoutHelper.instance.fontSize - 2,
-  color: COLOR_WHITE,
+  color: colorWhite,
 );
 
 TextStyle regularTxtStyleBlack = TextStyle(
@@ -51,16 +50,16 @@ TextStyle regularTxtStyleBlack = TextStyle(
 
 TextStyle medTxtStyle = TextStyle(
   fontSize: LayoutHelper.instance.fontSize,
-  color: COLOR_WHITE,
+  color: colorWhite,
 );
 TextStyle largeTxtStyle = TextStyle(
   fontSize: LayoutHelper.instance.fontSize + 2,
-  color: COLOR_WHITE,
+  color: colorWhite,
 );
 
 TextStyle largeTxtStyleBold = TextStyle(
     fontSize: LayoutHelper.instance.fontSize + 2,
-    color: COLOR_WHITE,
+    color: colorWhite,
     fontWeight: FontWeight.w600);
 TextStyle largeTxtStyleBoldBlack = TextStyle(
     fontSize: LayoutHelper.instance.fontSize + 2,
@@ -73,7 +72,7 @@ TextStyle menuTxtStyleSemiBold = TextStyle(
 
 TextStyle medTxtStyleSemiBold = TextStyle(
     fontSize: LayoutHelper.instance.fontSize,
-    color: COLOR_WHITE,
+    color: colorWhite,
     fontWeight: FontWeight.w600);
 
 TextStyle medTxtStyleSemiBoldBlack = TextStyle(
@@ -83,18 +82,18 @@ TextStyle medTxtStyleSemiBoldBlack = TextStyle(
 
 TextStyle semiBoldTxtStyle = TextStyle(
     fontSize: LayoutHelper.instance.fontSize - 2,
-    color: BLACK_TEXT_COLOR,
+    color: blackTextColor,
     fontWeight: FontWeight.w600);
 
 TextStyle boldTxtStyle = TextStyle(
   fontWeight: FontWeight.bold,
   fontSize: LayoutHelper.instance.fontSize + 2,
-  color: BLACK_TEXT_COLOR,
+  color: blackTextColor,
 );
 
 TextStyle extraSmallTxtStyle = TextStyle(
   fontSize: LayoutHelper.instance.fontSize - 5,
-  color: COLOR_PRIMARY_DARK,
+  color: colorPrimaryDark,
 );
 
 String disclamerText = "";

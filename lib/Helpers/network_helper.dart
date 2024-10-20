@@ -1,9 +1,6 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'AppConstants.dart';
-import 'FlavouConfig.dart';
 
 Future<bool> checkInternet() async {
   try {
@@ -16,7 +13,7 @@ Future<bool> checkInternet() async {
 }
 
 Dio getDio() {
-  Dio dio = new Dio();
+  Dio dio = Dio();
   dio.options.followRedirects = false;
   dio.options.validateStatus = (status) {
     return status! <= 500;
