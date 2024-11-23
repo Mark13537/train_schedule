@@ -32,10 +32,11 @@ class _SplashScreenState extends State<SplashScreen> {
     });
   }
 
+  // TODO: Change the below code to flag checking of network instead of domain check
   void checkInternetConnection() async {
     if (!await checkInternet()) {
       showCustomDialog(
-          context, "No Internet", "Please connect to internet to proceed.", () {
+          context, 'No Internet', 'Please connect to internet to proceed.', () {
         exit(0);
       });
     } else {
@@ -80,7 +81,7 @@ class _SplashScreenState extends State<SplashScreen> {
             Center(
                 child: Column(mainAxisSize: MainAxisSize.min, children: [
               SizedBox(height: 10.0),
-              Text("Lokshakti",
+              Text('Lokshakti',
                   textAlign: TextAlign.justify,
                   style: TextStyle(
                     fontSize: 30.0,

@@ -6,8 +6,8 @@ const Color colorPrimaryDark = Color(0xFF0000FF);
 const Color colorPrimary = Color(0xFF00B0F0);
 const Color blackTextColor = Color(0xFF000000);
 const Color colorGrey = Color(0xFFE0E0E0);
-const String sessionData = "SessionData";
-const String dashboardConstant = "DashboardConstants";
+const String sessionData = 'SessionData';
+const String dashboardConstant = 'DashboardConstants';
 
 const TextStyle regularTxtStyleWithNoSize = TextStyle(
   color: Colors.black,
@@ -96,4 +96,4 @@ TextStyle extraSmallTxtStyle = TextStyle(
   color: colorPrimaryDark,
 );
 
-String disclamerText = "";
+String disclamerText = '';

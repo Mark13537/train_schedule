@@ -1,83 +1,20 @@
-import 'package:equatable/equatable.dart';
+import 'package:json_annotation/json_annotation.dart';
+import 'package:train_schedule/Models/vbd.dart';
 
+part 'search_result.g.dart';
+
+@JsonSerializable()
 class SearchResult {
-  List<Vbd>? vbd = List.empty(growable: true);
-  var error;
+  final List<Vbd>? vbd;
+  final dynamic error;
 
-  SearchResult({this.vbd, this.error});
+  SearchResult({
+    this.vbd,
+    this.error,
+  });
 
-  SearchResult.fromJson(Map<String, dynamic> json) {
-    if (json['vbd'] != null) {
-      json['vbd'].forEach((v) {
-        vbd!.add(Vbd.fromJson(v));
-      });
-    }
-    error = json['error'];
-  }
+  factory SearchResult.fromJson(Map<String, dynamic> json) =>
+      _$SearchResultFromJson(json);
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
-    if (this.vbd != null) {
-      data['vbd'] = this.vbd!.map((v) => v.toJson()).toList();
-    }
-    data['error'] = this.error;
-    return data;
-  }
-}
-
-class Vbd extends Equatable {
-  String? coachName;
-  String? berthCode;
-  String? cabinCoupe;
-  String? cabinCoupeNo;
-  int? berthNumber;
-  String? from;
-  String? to;
-  int? splitNo;
-
-  Vbd(
-      {this.coachName,
-      this.berthCode,
-      this.cabinCoupe,
-      this.cabinCoupeNo,
-      this.berthNumber,
-      this.from,
-      this.to,
-      this.splitNo});
-
-  Vbd.fromJson(Map<String, dynamic> json) {
-    coachName = json['coachName'];
-    berthCode = json['berthCode'];
-    cabinCoupe = json['cabinCoupe'];
-    cabinCoupeNo = json['cabinCoupeNo'];
-    berthNumber = json['berthNumber'];
-    from = json['from'];
-    to = json['to'];
-    splitNo = json['splitNo'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['coachName'] = this.coachName;
-    data['berthCode'] = this.berthCode;
-    data['cabinCoupe'] = this.cabinCoupe;
-    data['cabinCoupeNo'] = this.cabinCoupeNo;
-    data['berthNumber'] = this.berthNumber;
-    data['from'] = this.from;
-    data['to'] = this.to;
-    data['splitNo'] = this.splitNo;
-    return data;
-  }
-
-  @override
-  List<Object?> get props => [
-        coachName,
-        berthCode,
-        cabinCoupe,
-        cabinCoupeNo,
-        berthNumber,
-        from,
-        to,
-        splitNo
-      ];
+  Map<String, dynamic> toJson() => _$SearchResultToJson(this);
 }

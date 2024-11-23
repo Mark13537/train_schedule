@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
@@ -12,6 +13,7 @@ import '../Helpers/flavou_config.dart';
 import '../Helpers/network_helper.dart';
 import '../Helpers/notification_helper.dart';
 import '../Helpers/station_constants.dart';
+import '../Models/vbd.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -22,14 +24,14 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   TextEditingController ipAdressController = TextEditingController()
-    ..text = "Fetching Seats";
+    ..text = 'Fetching Seats';
   SearchResult? searchResultModel;
   bool _isDialogShowing = true;
   bool initialLoad = true;
-  String selectCoachNo = "S1";
+  String selectCoachNo = 'S1';
   Map<String, List<Vbd>> coachWiseMap = {};
   DateTime now = DateTime.now();
-  String currentDate = "";
+  String currentDate = '';
   int chartType = 2;
 
   List<Widget> availableCoach = [
@@ -72,7 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             !_isDialogShowing
                 ? Expanded(child: mainBlock())
-                : buildDataLoder("Cooking fresh data...")
+                : buildDataLoder('Cooking fresh data...')
           ],
         ),
       ),
@@ -84,7 +86,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _isDialogShowing = true;
 
     String url =
-        "${FlavorConfig.instance.url()}www.irctc.co.in/online-charts/api/vacantBerth";
+        '${FlavorConfig.instance.url()}www.irctc.co.in/online-charts/api/vacantBerth';
     // Paschim number
     // var body = json.encode({
     //   "trainNo": "12925",
@@ -98,16 +100,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
     // Lokshati number
     var body = json.encode({
-      "trainNo": "22927",
-      "boardingStation": "ADH",
-      "remoteStation": "BDTS",
-      "trainSourceStation": "BDTS",
-      "jDate": currentDate,
-      "cls": "SL",
-      "chartType": chartType
+      'trainNo': '22927',
+      'boardingStation': 'ADH',
+      'remoteStation': 'BDTS',
+      'trainSourceStation': 'BDTS',
+      'jDate': currentDate,
+      'cls': 'SL',
+      'chartType': chartType
     });
 
-    await FirebaseAnalytics.instance.logEvent(name: "Calling API");
+    await FirebaseAnalytics.instance.logEvent(name: 'Calling API');
     try {
       final response = await getDio()
           .post(url,
@@ -121,15 +123,17 @@ class _HomeScreenState extends State<HomeScreen> {
           .catchError((onError) {
         showInFlushBar(
           context,
-          "Something went wrong.",
+          'Something went wrong.',
         );
+        return onError as FutureOr<Response<dynamic>>;
       });
 
       if (response.statusCode == 200) {
         if (_isDialogShowing) {
           setState(() {
             _isDialogShowing = false;
-            searchResultModel = SearchResult.fromJson(response.data);
+            searchResultModel =
+                SearchResult.fromJson(response.data as Map<String, dynamic>);
             if (searchResultModel != null &&
                 searchResultModel!.vbd != null &&
                 searchResultModel!.vbd!.isNotEmpty) {
@@ -144,8 +148,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     break;
                   }
                 }
-                if (searchResultModel!.vbd![mainIndex].to == "ADH" ||
-                    searchResultModel!.vbd![mainIndex].to == "BVI") {
+                if (searchResultModel!.vbd![mainIndex].to == 'ADH' ||
+                    searchResultModel!.vbd![mainIndex].to == 'BVI') {
                   seatFoundStartingBetweenBandarOrVirar = false;
                 }
                 if (!seatFoundStartingBetweenBandarOrVirar) {
@@ -154,7 +158,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 // data might be null, empty string or whitespace
                 if (searchResultModel!.vbd![mainIndex].berthCode == null ||
                     searchResultModel!.vbd![mainIndex].berthCode!.isEmpty ||
-                    searchResultModel!.vbd![mainIndex].berthCode! == " ") {
+                    searchResultModel!.vbd![mainIndex].berthCode! == ' ') {
                   searchResultModel!.vbd![mainIndex].berthCode =
                       calculateBerthCode(
                           searchResultModel!.vbd![mainIndex].berthNumber!);
@@ -221,7 +225,7 @@ class _HomeScreenState extends State<HomeScreen> {
         }
         showInFlushBar(
           context,
-          "Something went wrong. please wait.",
+          'Something went wrong. please wait.',
         );
         if (chartType != 1) {
           chartType = 1;
@@ -230,7 +234,7 @@ class _HomeScreenState extends State<HomeScreen> {
           return;
         }
       }
-    } on DioError catch (e) {
+    } on DioError catch (error) {
       if (_isDialogShowing) {
         setState(() {
           _isDialogShowing = false;
@@ -238,8 +242,9 @@ class _HomeScreenState extends State<HomeScreen> {
       }
       showInFlushBar(
         context,
-        "Something went wrong. Please wait.",
+        'Something went wrong. Please wait.',
       );
+      return error as FutureOr<Response<dynamic>>;
     }
   }
 
@@ -274,7 +279,7 @@ class _HomeScreenState extends State<HomeScreen> {
             selectedCoach[i] = i == index;
           }
           int coachNo = index + 1;
-          selectCoachNo = "S$coachNo";
+          selectCoachNo = 'S$coachNo';
         });
       },
       borderRadius: const BorderRadius.all(Radius.circular(8)),
@@ -302,16 +307,16 @@ class _HomeScreenState extends State<HomeScreen> {
           height: 20,
         ),
         chartType == 2
-            ? const Text("Showing fresh data")
+            ? const Text('Showing fresh data')
             : const Text(
-                "Showing 1st chart, some seats might have been booked. Hope you select the vacant seat.\nBest of luck 🍀",
+                'Showing 1st chart, some seats might have been booked. Hope you select the vacant seat.\nBest of luck 🍀',
                 textAlign: TextAlign.center,
               ),
         const SizedBox(
           height: 10,
         ),
         Text(
-          "Total Seats in $selectCoachNo are ${coachWiseMap[selectCoachNo] == null ? 0 : coachWiseMap[selectCoachNo]!.length}",
+          'Total Seats in $selectCoachNo are ${coachWiseMap[selectCoachNo] == null ? 0 : coachWiseMap[selectCoachNo]!.length}',
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         listOfSeats()
@@ -331,7 +336,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 textAlign: TextAlign.center,
               )
             : Text(
-                "Please try again after some time, charts might not have been prepared!\n\nHave some food 🍕 , catch up with friends! 😌\n\n Usual time is around 7:15 pm or 7.30 pm",
+                'Please try again after some time, charts might not have been prepared!\n\nHave some food 🍕 , catch up with friends! 😌\n\n Usual time is around 7:15 pm or 7.30 pm',
                 style: medTxtStyleBoldPriBlue,
                 textAlign: TextAlign.center,
               ),
@@ -354,7 +359,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Padding(
           padding: const EdgeInsets.all(10.0),
           child: Text(
-            "No Seats in this coach 💔",
+            'No Seats in this coach 💔',
             style: medTxtStyleSemiBoldBlack,
           ),
         ),
@@ -383,14 +388,14 @@ class _HomeScreenState extends State<HomeScreen> {
           Column(
             children: [
               Text(
-                stationNameMap[vbd.from],
+                stationNameMap[vbd.from] as String,
                 style: smallTxtStyleBoldBlue,
               ),
               const SizedBox(
                 height: 5,
               ),
               Text(
-                stationNameMap[vbd.to] ?? vbd.to,
+                (stationNameMap[vbd.to] ?? vbd.to) as String,
                 style: smallTxtStyleBoldBlue,
               )
             ],
@@ -400,9 +405,10 @@ class _HomeScreenState extends State<HomeScreen> {
             style: smallTxtStyleBoldPriBlue,
           ),
           Text(
-            vbd.berthCode!.endsWith("*")
-                ? vbd.berthCode
-                : berthCodes[vbd.berthCode] ?? "Not mentioned",
+            (vbd.berthCode!.endsWith('*')
+                    ? vbd.berthCode
+                    : berthCodes[vbd.berthCode]) as String? ??
+                'Not mentioned',
             style: smallTxtStyleBoldBlue,
           )
         ],
@@ -411,10 +417,10 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Color getBgColorForRow(String stationCode) {
-    if (stationCode == "VR") {
+    if (stationCode == 'VR') {
       return Colors.redAccent;
     }
-    if (stationCode == "PLG" || stationCode == "SAH") {
+    if (stationCode == 'PLG' || stationCode == 'SAH') {
       return Colors.yellowAccent;
     }
     return Colors.greenAccent;
@@ -430,7 +436,7 @@ class _HomeScreenState extends State<HomeScreen> {
         berthCodeNumber = 1;
       }
     }
-    return berthCodes[beathNumberAndType[berthCodeNumber]] + " *";
+    return ('${berthCodes[beathNumberAndType[berthCodeNumber]]} *');
   }
 
   bool isItHighTime() {

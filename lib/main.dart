@@ -10,7 +10,8 @@ Future<void> main() async {
   await Firebase.initializeApp();
   FlavorConfig(
       flavor: Flavor.dev,
-      appVersion: "1.0.0",
+      // ignore: prefer_single_quotes
+      appVersion: '1.0.0',
       color: Colors.cyan,
       versionCode: 1);
   runApp(const MyApp());

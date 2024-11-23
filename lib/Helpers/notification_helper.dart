@@ -25,7 +25,7 @@ void showCustomDialog(BuildContext context, String title, String message,
         ),
         actions: <Widget>[
           TextButton(
-            child: const Text("OK", style: TextStyle()),
+            child: const Text('OK', style: TextStyle()),
             onPressed: () => okPressed,
           ),
         ],
@@ -93,7 +93,7 @@ void showLoadingDialog(BuildContext context, String title) {
                   children: <Widget>[
                     spinkit,
                     Text(
-                      "\n $title...",
+                      '\n $title...',
                       style: TextStyle(
                           color: Colors.white,
                           fontFamily: 'WorkSansRegular',
