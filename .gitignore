@@ -32,7 +32,6 @@ migrate_working_dir/
 .pub/
 /build/
 *.g.dart
-**.lock
 
 # Web related
 lib/generated_plugin_registrant.dart
