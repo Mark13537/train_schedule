@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'layout_helper.dart';
 
 const Color colorWhite = Color(0xFFFFFFFF);
+const Color colorRed = Colors.red;
 const Color colorPrimaryDark = Color(0xFF0000FF);
 const Color colorPrimary = Color(0xFF00B0F0);
 const Color blackTextColor = Color(0xFF000000);

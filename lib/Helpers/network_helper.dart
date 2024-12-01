@@ -1,15 +1,14 @@
-import 'dart:io';
-
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 
 Future<bool> checkInternet() async {
-  try {
-    final result = await InternetAddress.lookup('google.com');
-    if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {}
-  } on SocketException catch (_) {
-    return false;
+  final List<ConnectivityResult> connectivityResult =
+      await (Connectivity().checkConnectivity());
+  if (connectivityResult.last == ConnectivityResult.mobile ||
+      connectivityResult.last == ConnectivityResult.wifi) {
+    return true;
   }
-  return true;
+  return false;
 }
 
 Dio getDio() {

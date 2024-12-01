@@ -45,63 +45,32 @@ void showInFlushBar(BuildContext context, String value) {
       value,
       textAlign: TextAlign.center,
       style: TextStyle(
-        color: colorPrimary,
+        color: colorWhite,
         fontSize: LayoutHelper.instance.fontSize,
       ),
     ),
     duration: const Duration(seconds: 3),
-    backgroundColor: colorWhite,
+    backgroundColor: colorRed,
   ).show(context);
 }
 
-void showInFlushBarWithColor(BuildContext context, String value, Color color) {
-  FocusScope.of(context).requestFocus(FocusNode());
-
-  Flushbar(
-    forwardAnimationCurve: Curves.fastLinearToSlowEaseIn,
-    reverseAnimationCurve: Curves.fastOutSlowIn,
-    animationDuration: const Duration(milliseconds: 500),
-    messageText: Text(
-      value,
-      textAlign: TextAlign.center,
-      style: TextStyle(
-        color: color,
-        fontSize: LayoutHelper.instance.fontSize,
-      ),
+Center buildDataLoder(String message) {
+  return Center(
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
+        const SpinKitRing(
+          lineWidth: 3,
+          color: colorPrimaryDark,
+          size: 40.0,
+          duration: Duration(milliseconds: 1000),
+        ),
+        const SizedBox(height: 10),
+        Text(
+          message,
+          style: semiBoldTxtStyle,
+        ),
+      ],
     ),
-    duration: const Duration(seconds: 3),
-    backgroundColor: colorWhite,
-  ).show(context);
-}
-
-void showLoadingDialog(BuildContext context, String title) {
-  const spinkit = SpinKitPulse(
-    color: Colors.white,
-    size: 50.0,
-    duration: Duration(milliseconds: 1000),
   );
-  showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => PopScope(
-            canPop: false,
-            child: Material(
-              type: MaterialType.transparency,
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    spinkit,
-                    Text(
-                      '\n $title...',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontFamily: 'WorkSansRegular',
-                          fontSize: LayoutHelper.instance.fontSize),
-                    )
-                  ],
-                ),
-              ),
-            ),
-          ));
 }

@@ -4,7 +4,6 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:train_schedule/Helpers/app_constants.dart';
 import 'package:train_schedule/Models/search_result.dart';
@@ -16,7 +15,7 @@ import '../Helpers/station_constants.dart';
 import '../Models/vbd.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -121,10 +120,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               ))
           .catchError((onError) {
-        showInFlushBar(
-          context,
-          'Something went wrong.',
-        );
+        print('Error 500');
         return onError as FutureOr<Response<dynamic>>;
       });
 
@@ -223,10 +219,7 @@ class _HomeScreenState extends State<HomeScreen> {
             _isDialogShowing = false;
           });
         }
-        showInFlushBar(
-          context,
-          'Something went wrong. please wait.',
-        );
+        print('Error something went wrong');
         if (chartType != 1) {
           chartType = 1;
           getSeatInfo();
@@ -234,39 +227,15 @@ class _HomeScreenState extends State<HomeScreen> {
           return;
         }
       }
-    } on DioError catch (error) {
+    } on Exception catch (error) {
       if (_isDialogShowing) {
         setState(() {
           _isDialogShowing = false;
         });
       }
-      showInFlushBar(
-        context,
-        'Something went wrong. Please wait.',
-      );
+      print('Exception occure');
       return error as FutureOr<Response<dynamic>>;
     }
-  }
-
-  Center buildDataLoder(String message) {
-    return Center(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          const SpinKitRing(
-            lineWidth: 3,
-            color: colorPrimaryDark,
-            size: 40.0,
-            duration: Duration(milliseconds: 1000),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            message,
-            style: semiBoldTxtStyle,
-          ),
-        ],
-      ),
-    );
   }
 
   Widget buildCoachNo() {

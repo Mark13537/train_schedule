@@ -20,12 +20,6 @@ version: 1.0.0+1
 environment:
   sdk: ^3.5.0
 
-# Dependencies specify other packages that your package needs in order to work.
-# To automatically upgrade your package dependencies to the latest versions
-# consider running `flutter pub upgrade --major-versions`. Alternatively,
-# dependencies can be manually updated by changing the version numbers below to
-# the latest version available on pub.dev. To see which dependencies have newer
-# versions available, run `flutter pub outdated`.
 dependencies:
   flutter:
     sdk: flutter
@@ -41,6 +35,7 @@ dependencies:
   firebase_analytics: ^11.3.5
   equatable: ^2.0.5
   json_annotation: ^4.9.0
+  connectivity_plus: ^6.1.0
 
 dev_dependencies:
   flutter_test:

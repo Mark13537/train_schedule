@@ -9,7 +9,7 @@ import '../Helpers/network_helper.dart';
 import '../Helpers/notification_helper.dart';
 
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({Key? key}) : super(key: key);
+  const SplashScreen({super.key});
 
   @override
   _SplashScreenState createState() => _SplashScreenState();
@@ -22,7 +22,6 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    checkInternetConnection();
   }
 
   void goToHomeScreen() {
@@ -33,8 +32,8 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   // TODO: Change the below code to flag checking of network instead of domain check
-  void checkInternetConnection() async {
-    if (!await checkInternet()) {
+  void checkInternetConnection(final BuildContext context) async {
+    if (!await checkInternet() && context.mounted) {
       showCustomDialog(
           context, 'No Internet', 'Please connect to internet to proceed.', () {
         exit(0);
@@ -67,6 +66,8 @@ class _SplashScreenState extends State<SplashScreen> {
         : (width > 400 && width < 600)
             ? 24
             : 28;
+
+    checkInternetConnection(context);
 
     return SafeArea(
       child: Scaffold(
