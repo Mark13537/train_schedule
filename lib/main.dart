@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Lokshakti',
+      title: 'Lokshakti and Flying',
       theme: ThemeData(
         primarySwatch: Colors.cyan,
       ),

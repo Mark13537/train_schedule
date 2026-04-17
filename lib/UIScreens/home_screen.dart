@@ -41,7 +41,6 @@ class _HomeScreenState extends State<HomeScreen> {
     const Text('S5'),
     const Text('S6'),
     const Text('S7'),
-    const Text('S8'),
   ];
   List<bool> selectedCoach = [
     true,
