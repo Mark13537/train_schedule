@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:train_schedule/Helpers/app_constants.dart';
 import 'package:train_schedule/Models/search_result.dart';
+import 'package:train_schedule/Models/train_config.dart';
 
 import '../Helpers/flavou_config.dart';
 import '../Helpers/network_helper.dart';
@@ -22,43 +23,54 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  TextEditingController ipAdressController = TextEditingController()
-    ..text = 'Fetching Seats';
+  TextEditingController trainNoTxtController = TextEditingController();
   SearchResult? searchResultModel;
   bool _isDialogShowing = true;
   bool initialLoad = true;
-  String selectCoachNo = 'S1';
+  String selectCoachNo = '';
   Map<String, List<Vbd>> coachWiseMap = {};
   DateTime now = DateTime.now();
   String currentDate = '';
   int chartType = 2;
-
-  List<Widget> availableCoach = [
-    const Text('S1'),
-    const Text('S2'),
-    const Text('S3'),
-    const Text('S4'),
-    const Text('S5'),
-    const Text('S6'),
-    const Text('S7'),
-  ];
-  List<bool> selectedCoach = [
-    true,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false
-  ];
+  String coachPrefix = 'S';
+  List<Widget> availableCoach = [];
+  List<bool> selectedCoach = [];
   List<int> indexToBeRemoved = List.empty(growable: true);
+  late TrainConfig flyingMorningConfig,
+      flyingReturnConfig,
+      lokshaktiReturnConfig;
 
   @override
   void initState() {
     super.initState();
     currentDate = DateFormat('yyyy-MM-dd').format(now);
-    getSeatInfo();
+
+    flyingMorningConfig = TrainConfig(
+        trainNo: '12922',
+        boardingStation: 'DRD',
+        jDate: currentDate,
+        cls: '2S',
+        chartType: chartType,
+        remoteStation: 'ST',
+        trainSourceStation: 'ST');
+    flyingReturnConfig = TrainConfig(
+        trainNo: '12921',
+        boardingStation: 'MMCT',
+        jDate: currentDate,
+        cls: '2S',
+        chartType: chartType,
+        remoteStation: 'MMCT',
+        trainSourceStation: 'MMCT');
+    lokshaktiReturnConfig = TrainConfig(
+        trainNo: '22927',
+        boardingStation: 'ADH',
+        jDate: currentDate,
+        cls: 'SL',
+        chartType: chartType,
+        remoteStation: 'BDTS',
+        trainSourceStation: 'BDTS');
+
+    getSeatInfo(trainConfig: flyingReturnConfig);
   }
 
   @override
@@ -70,6 +82,27 @@ class _HomeScreenState extends State<HomeScreen> {
         margin: const EdgeInsets.all(5),
         child: Column(
           children: [
+            Wrap(
+              alignment: WrapAlignment.center,
+              spacing: 10,
+              children: [
+                OutlinedButton(
+                    onPressed: () {
+                      getSeatInfo(trainConfig: flyingMorningConfig);
+                    },
+                    child: const Text('Flying Morning')),
+                OutlinedButton(
+                    onPressed: () {
+                      getSeatInfo(trainConfig: flyingReturnConfig);
+                    },
+                    child: const Text('Flying Return')),
+                OutlinedButton(
+                    onPressed: () {
+                      getSeatInfo(trainConfig: lokshaktiReturnConfig);
+                    },
+                    child: const Text('Lokshakti Return')),
+              ],
+            ),
             !_isDialogShowing
                 ? Expanded(child: mainBlock())
                 : buildDataLoder('Cooking fresh data...')
@@ -79,9 +112,15 @@ class _HomeScreenState extends State<HomeScreen> {
     ));
   }
 
-  getSeatInfo() async {
+  getSeatInfo({required TrainConfig trainConfig}) async {
     searchResultModel = null;
     _isDialogShowing = true;
+
+    selectCoachNo = '';
+    coachWiseMap.clear();
+
+    availableCoach.clear();
+    selectedCoach.clear();
 
     String url =
         '${FlavorConfig.instance.url()}www.irctc.co.in/online-charts/api/vacantBerth';
@@ -97,15 +136,21 @@ class _HomeScreenState extends State<HomeScreen> {
     // });
 
     // Lokshati number
-    var body = json.encode({
-      'trainNo': '22927',
-      'boardingStation': 'ADH',
-      'remoteStation': 'BDTS',
-      'trainSourceStation': 'BDTS',
-      'jDate': currentDate,
-      'cls': 'SL',
-      'chartType': chartType
-    });
+    // var body = json.encode({
+    //   'trainNo': trainNumber,
+    //   'boardingStation':
+    //       (int.tryParse(trainNumber) ?? 0 % 2) == 0 ? 'DRD' : 'ADH',
+    //   'remoteStation': 'BDTS',
+    //   'trainSourceStation': 'BDTS',
+    //   'jDate': currentDate,
+    //   'cls': 'SL',
+    //   'chartType': chartType
+    // });
+
+    print("THE BODY");
+    print(trainConfig.toJson());
+
+    var body = json.encode(trainConfig.toJson());
 
     await FirebaseAnalytics.instance.logEvent(name: 'Calling API');
     try {
@@ -135,21 +180,33 @@ class _HomeScreenState extends State<HomeScreen> {
               for (int mainIndex = 0;
                   mainIndex < searchResultModel!.vbd!.length;
                   mainIndex++) {
-                bool seatFoundStartingBetweenBandarOrVirar = false;
-                for (int fromIndex = 1; fromIndex <= 4; fromIndex++) {
-                  if (searchResultModel!.vbd![mainIndex].from ==
-                      stationCodeSequence[fromIndex]) {
-                    seatFoundStartingBetweenBandarOrVirar = true;
-                    break;
-                  }
-                }
-                if (searchResultModel!.vbd![mainIndex].to == 'ADH' ||
-                    searchResultModel!.vbd![mainIndex].to == 'BVI') {
-                  seatFoundStartingBetweenBandarOrVirar = false;
-                }
-                if (!seatFoundStartingBetweenBandarOrVirar) {
-                  indexToBeRemoved.add(mainIndex);
-                }
+                // bool seatFoundAtFirst3Stops = false;
+                // bool crawlLisReverse = false;
+                // if (int.parse(trainConfig.trainNo) % 2 == 0) {
+                //   crawlLisReverse = true;
+                // }
+                // int start = crawlLisReverse ? 8 : 0;
+                // int end = crawlLisReverse ? 6 : 3;
+                // int step = crawlLisReverse ? -1 : 1;
+
+                // for (int i = start;
+                //     crawlLisReverse ? i >= end : i <= end;
+                //     i += step) {
+                //   if (searchResultModel!.vbd![mainIndex].from ==
+                //       stationCodeSequence[i]) {
+                //     seatFoundAtFirst3Stops = true;
+                //     // if (searchResultModel!.vbd![mainIndex].to ==
+                //     //     stationCodeSequence[i]) {
+                //     //   seatFoundAtFirst3Stops = false;
+                //     // }
+                //   }
+                // }
+                // if (!seatFoundAtFirst3Stops) {
+                //   indexToBeRemoved.add(mainIndex);
+                //   print("hereee");
+                //   print(indexToBeRemoved.toString());
+                //   print("hereee");
+                // }
                 // data might be null, empty string or whitespace
                 if (searchResultModel!.vbd![mainIndex].berthCode == null ||
                     searchResultModel!.vbd![mainIndex].berthCode!.isEmpty ||
@@ -172,6 +229,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 }
                 coachWiseMap[list.coachName]!.add(list);
               }
+              selectCoachNo = coachWiseMap.keys.first;
+              coachPrefix = selectCoachNo[0];
               coachWiseMap.forEach((key, value) {
                 value
                     .sort(((a, b) => a.berthNumber!.compareTo(b.berthNumber!)));
@@ -196,6 +255,17 @@ class _HomeScreenState extends State<HomeScreen> {
                 value = list;
               });
 
+              for (var element in coachWiseMap.keys) {
+                availableCoach.add(Text(element));
+                selectedCoach.add(false);
+              }
+              if (selectedCoach.isNotEmpty) {
+                selectedCoach[0] = true;
+              }
+
+              print("==========");
+              print(searchResultModel!.vbd!.length.toString());
+              print("==========");
               // for (int printIndex = 0;
               //     printIndex < searchResultModel!.vbd!.length;
               //     printIndex++) {
@@ -203,9 +273,10 @@ class _HomeScreenState extends State<HomeScreen> {
               //    print("${searchResultModel!.vbd![printIndex].berthNumber}");
               // }
             } else {
-              if (chartType != 1) {
+              if (trainConfig.chartType != 1) {
+                trainConfig.chartType = 1;
                 chartType = 1;
-                getSeatInfo();
+                getSeatInfo(trainConfig: trainConfig);
               } else {
                 return;
               }
@@ -219,9 +290,10 @@ class _HomeScreenState extends State<HomeScreen> {
           });
         }
         print('Error something went wrong');
-        if (chartType != 1) {
+        if (trainConfig.chartType != 1) {
+          trainConfig.chartType = 1;
           chartType = 1;
-          getSeatInfo();
+          getSeatInfo(trainConfig: trainConfig);
         } else {
           return;
         }
@@ -247,7 +319,7 @@ class _HomeScreenState extends State<HomeScreen> {
             selectedCoach[i] = i == index;
           }
           int coachNo = index + 1;
-          selectCoachNo = 'S$coachNo';
+          selectCoachNo = '$coachPrefix$coachNo';
         });
       },
       borderRadius: const BorderRadius.all(Radius.circular(8)),
@@ -297,17 +369,11 @@ class _HomeScreenState extends State<HomeScreen> {
       return Expanded(
           child: Padding(
         padding: const EdgeInsets.all(10.0),
-        child: isItHighTime()
-            ? Text(
-                "I think there is someting wrong.\n You're on your own, best on luck 😂",
-                style: medTxtStyleBoldPriBlue,
-                textAlign: TextAlign.center,
-              )
-            : Text(
-                'Please try again after some time, charts might not have been prepared!\n\nHave some food 🍕 , catch up with friends! 😌\n\n Usual time is around 7:15 pm or 7.30 pm',
-                style: medTxtStyleBoldPriBlue,
-                textAlign: TextAlign.center,
-              ),
+        child: Text(
+          "Please try again after some time, charts might not have been prepared yet!\nIf the issue persists then I think there is something wrong.\n\nYou're on your own, best of luck 😂",
+          style: medTxtStyleBoldPriBlue,
+          textAlign: TextAlign.center,
+        ),
       ));
     }
     if (coachWiseMap[selectCoachNo] == null
@@ -356,7 +422,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Column(
             children: [
               Text(
-                stationNameMap[vbd.from] as String,
+                (stationNameMap[vbd.from] ?? vbd.from).toString(),
                 style: smallTxtStyleBoldBlue,
               ),
               const SizedBox(
@@ -369,14 +435,15 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
           Text(
-            vbd.berthNumber!.toString(),
+            (vbd.berthNumber ?? 0).toString(),
             style: smallTxtStyleBoldPriBlue,
           ),
           Text(
             (vbd.berthCode!.endsWith('*')
                     ? vbd.berthCode
                     : berthCodes[vbd.berthCode]) as String? ??
-                'Not mentioned',
+                vbd.berthCode ??
+                'NA',
             style: smallTxtStyleBoldBlue,
           )
         ],
@@ -385,12 +452,12 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Color getBgColorForRow(String stationCode) {
-    if (stationCode == 'VR') {
-      return Colors.redAccent;
-    }
-    if (stationCode == 'PLG' || stationCode == 'SAH') {
-      return Colors.yellowAccent;
-    }
+    // if (stationCode == 'VR') {
+    //   return Colors.redAccent;
+    // }
+    // if (stationCode == 'PLG' || stationCode == 'SAH') {
+    //   return Colors.yellowAccent;
+    // }
     return Colors.greenAccent;
   }
 
@@ -405,16 +472,5 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     }
     return ('${berthCodes[beathNumberAndType[berthCodeNumber]]} *');
-  }
-
-  bool isItHighTime() {
-    DateTime currentTime = DateTime.now();
-    DateTime timeLine =
-        DateTime.now().copyWith(hour: 19, minute: 45, second: 0);
-    if (currentTime.isBefore(timeLine)) {
-      return false;
-    } else {
-      return true;
-    }
   }
 }

@@ -74,15 +74,19 @@ class _SplashScreenState extends State<SplashScreen> {
         backgroundColor: Colors.white,
         body: Container(
           height: height,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
               gradient: LinearGradient(
-            colors: [Colors.blue.shade500, Colors.blue.shade900],
+            colors: [
+              Color(0xFF9CECFB),
+              Color(0xFF65C7F7),
+              Color(0xFF0052D4),
+            ],
           )),
           child: const Stack(children: <Widget>[
             Center(
                 child: Column(mainAxisSize: MainAxisSize.min, children: [
               SizedBox(height: 10.0),
-              Text('Lokshakti',
+              Text('Vacant Seats',
                   textAlign: TextAlign.justify,
                   style: TextStyle(
                     fontSize: 30.0,

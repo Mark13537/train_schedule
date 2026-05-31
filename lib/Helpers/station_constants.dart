@@ -18,8 +18,8 @@ Map berthCodes = {
   'R': 'Side Lower'
 };
 
-//TODO: Check what is this
 Map stationCodeSequence = {
+  0: 'MMTC',
   1: 'BDTS',
   2: 'ADH',
   3: 'BVI',
