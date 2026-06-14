@@ -27,7 +27,17 @@ Map stationCodeSequence = {
   5: 'SAH',
   6: 'PLG',
   7: 'BOR',
-  8: 'DRD'
+  8: 'DRD',
+  9: 'UBR',
+  10: 'VAPI',
+  11: 'BL',
+  12: 'BIM',
+  13: 'AML',
+  14: 'NVS',
+  15: 'MRL',
+  16: 'SCH',
+  17: 'UDN',
+  18: 'ST'
 };
 
 Map beathNumberAndType = {

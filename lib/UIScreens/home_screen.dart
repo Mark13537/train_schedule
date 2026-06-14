@@ -31,11 +31,11 @@ class _HomeScreenState extends State<HomeScreen> {
   Map<String, List<Vbd>> coachWiseMap = {};
   DateTime now = DateTime.now();
   String currentDate = '';
-  int chartType = 2;
   String coachPrefix = 'S';
-  List<Widget> availableCoach = [];
+  List<String> availableCoach = [];
   List<bool> selectedCoach = [];
-  List<int> indexToBeRemoved = List.empty(growable: true);
+  List<int> indexToBeRemoved = [];
+  bool isChat2 = true;
   late TrainConfig flyingMorningConfig,
       flyingReturnConfig,
       lokshaktiReturnConfig;
@@ -50,7 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
         boardingStation: 'DRD',
         jDate: currentDate,
         cls: '2S',
-        chartType: chartType,
+        chartType: 2,
         remoteStation: 'ST',
         trainSourceStation: 'ST');
     flyingReturnConfig = TrainConfig(
@@ -58,7 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
         boardingStation: 'MMCT',
         jDate: currentDate,
         cls: '2S',
-        chartType: chartType,
+        chartType: 2,
         remoteStation: 'MMCT',
         trainSourceStation: 'MMCT');
     lokshaktiReturnConfig = TrainConfig(
@@ -66,11 +66,11 @@ class _HomeScreenState extends State<HomeScreen> {
         boardingStation: 'ADH',
         jDate: currentDate,
         cls: 'SL',
-        chartType: chartType,
+        chartType: 2,
         remoteStation: 'BDTS',
         trainSourceStation: 'BDTS');
 
-    getSeatInfo(trainConfig: flyingReturnConfig);
+    getSeatInfo(trainConfig: lokshaktiReturnConfig);
   }
 
   @override
@@ -113,43 +113,19 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   getSeatInfo({required TrainConfig trainConfig}) async {
+    trainConfig.chartType == 1 ? isChat2 = false : true;
     searchResultModel = null;
     _isDialogShowing = true;
 
     selectCoachNo = '';
     coachWiseMap.clear();
+    indexToBeRemoved.clear();
 
     availableCoach.clear();
     selectedCoach.clear();
 
     String url =
         '${FlavorConfig.instance.url()}www.irctc.co.in/online-charts/api/vacantBerth';
-    // Paschim number
-    // var body = json.encode({
-    //   "trainNo": "12925",
-    //   "boardingStation": "BVI",
-    //   "remoteStation": "MMCT",
-    //   "trainSourceStation": "MMCT",
-    //   "jDate": "2023-05-28",
-    //   "cls": "SL",
-    //   "chartType": 2
-    // });
-
-    // Lokshati number
-    // var body = json.encode({
-    //   'trainNo': trainNumber,
-    //   'boardingStation':
-    //       (int.tryParse(trainNumber) ?? 0 % 2) == 0 ? 'DRD' : 'ADH',
-    //   'remoteStation': 'BDTS',
-    //   'trainSourceStation': 'BDTS',
-    //   'jDate': currentDate,
-    //   'cls': 'SL',
-    //   'chartType': chartType
-    // });
-
-    print("THE BODY");
-    print(trainConfig.toJson());
-
     var body = json.encode(trainConfig.toJson());
 
     await FirebaseAnalytics.instance.logEvent(name: 'Calling API');
@@ -180,33 +156,39 @@ class _HomeScreenState extends State<HomeScreen> {
               for (int mainIndex = 0;
                   mainIndex < searchResultModel!.vbd!.length;
                   mainIndex++) {
-                // bool seatFoundAtFirst3Stops = false;
-                // bool crawlLisReverse = false;
-                // if (int.parse(trainConfig.trainNo) % 2 == 0) {
-                //   crawlLisReverse = true;
-                // }
-                // int start = crawlLisReverse ? 8 : 0;
-                // int end = crawlLisReverse ? 6 : 3;
-                // int step = crawlLisReverse ? -1 : 1;
-
-                // for (int i = start;
-                //     crawlLisReverse ? i >= end : i <= end;
-                //     i += step) {
-                //   if (searchResultModel!.vbd![mainIndex].from ==
-                //       stationCodeSequence[i]) {
-                //     seatFoundAtFirst3Stops = true;
-                //     // if (searchResultModel!.vbd![mainIndex].to ==
-                //     //     stationCodeSequence[i]) {
-                //     //   seatFoundAtFirst3Stops = false;
-                //     // }
-                //   }
-                // }
-                // if (!seatFoundAtFirst3Stops) {
-                //   indexToBeRemoved.add(mainIndex);
-                //   print("hereee");
-                //   print(indexToBeRemoved.toString());
-                //   print("hereee");
-                // }
+                bool crawlLisReverse = false;
+                if (int.parse(trainConfig.trainNo) % 2 == 0) {
+                  crawlLisReverse = true;
+                }
+                int start = crawlLisReverse ? 18 : 0;
+                int end = crawlLisReverse ? 8 : 3;
+                int step = crawlLisReverse ? -1 : 1;
+                bool seatFoundAtFirst3Stops = false;
+                for (int i = start;
+                    crawlLisReverse ? i >= end : i <= end;
+                    i += step) {
+                  if (crawlLisReverse) {
+                    if (searchResultModel!.vbd![mainIndex].to ==
+                        stationCodeSequence[i]) {
+                      indexToBeRemoved.add(mainIndex);
+                      break;
+                    }
+                  } else {
+                    if (searchResultModel!.vbd![mainIndex].from ==
+                        stationCodeSequence[i]) {
+                      seatFoundAtFirst3Stops = true;
+                      break;
+                    }
+                  }
+                }
+                if (searchResultModel!.vbd![mainIndex].to == 'ADH' ||
+                    searchResultModel!.vbd![mainIndex].to == 'BVI') {
+                  seatFoundAtFirst3Stops = false;
+                }
+                if (!seatFoundAtFirst3Stops) {
+                  indexToBeRemoved.add(mainIndex);
+                  break;
+                }
                 // data might be null, empty string or whitespace
                 if (searchResultModel!.vbd![mainIndex].berthCode == null ||
                     searchResultModel!.vbd![mainIndex].berthCode!.isEmpty ||
@@ -216,10 +198,12 @@ class _HomeScreenState extends State<HomeScreen> {
                           searchResultModel!.vbd![mainIndex].berthNumber!);
                 }
               }
+              indexToBeRemoved = indexToBeRemoved.toSet().toList();
               for (int removeIndex = indexToBeRemoved.length - 1;
                   removeIndex >= 0;
                   removeIndex--) {
-                searchResultModel!.vbd!.removeAt(indexToBeRemoved[removeIndex]);
+                searchResultModel?.vbd
+                    ?.removeAt(indexToBeRemoved.elementAt(removeIndex));
               }
 
               // sixfigure code to look and check to sort all seat numbers in accending
@@ -229,12 +213,16 @@ class _HomeScreenState extends State<HomeScreen> {
                 }
                 coachWiseMap[list.coachName]!.add(list);
               }
-              selectCoachNo = coachWiseMap.keys.first;
-              coachPrefix = selectCoachNo[0];
-              coachWiseMap.forEach((key, value) {
-                value
-                    .sort(((a, b) => a.berthNumber!.compareTo(b.berthNumber!)));
-              });
+              if (coachWiseMap.keys.isNotEmpty) {
+                selectCoachNo = coachWiseMap.keys.first;
+                coachPrefix = selectCoachNo[0];
+                coachWiseMap.forEach((key, value) {
+                  value.sort(
+                      ((a, b) => a.berthNumber!.compareTo(b.berthNumber!)));
+                });
+              } else {
+                print("it was emptu");
+              }
 
               // Logic to remove repeated seats
               coachWiseMap.forEach((key, value) {
@@ -254,18 +242,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 value = list;
               });
-
               for (var element in coachWiseMap.keys) {
-                availableCoach.add(Text(element));
+                availableCoach.add(element);
                 selectedCoach.add(false);
               }
+              availableCoach.sort();
               if (selectedCoach.isNotEmpty) {
                 selectedCoach[0] = true;
               }
 
-              print("==========");
-              print(searchResultModel!.vbd!.length.toString());
-              print("==========");
               // for (int printIndex = 0;
               //     printIndex < searchResultModel!.vbd!.length;
               //     printIndex++) {
@@ -275,7 +260,6 @@ class _HomeScreenState extends State<HomeScreen> {
             } else {
               if (trainConfig.chartType != 1) {
                 trainConfig.chartType = 1;
-                chartType = 1;
                 getSeatInfo(trainConfig: trainConfig);
               } else {
                 return;
@@ -289,10 +273,8 @@ class _HomeScreenState extends State<HomeScreen> {
             _isDialogShowing = false;
           });
         }
-        print('Error something went wrong');
         if (trainConfig.chartType != 1) {
           trainConfig.chartType = 1;
-          chartType = 1;
           getSeatInfo(trainConfig: trainConfig);
         } else {
           return;
@@ -304,22 +286,24 @@ class _HomeScreenState extends State<HomeScreen> {
           _isDialogShowing = false;
         });
       }
-      print('Exception occure');
       return error as FutureOr<Response<dynamic>>;
     }
   }
 
   Widget buildCoachNo() {
+    List<Widget> widgetList = [];
+    for (var element in availableCoach) {
+      widgetList.add(Text(element));
+    }
     return ToggleButtons(
       direction: Axis.horizontal,
       onPressed: (int index) {
         setState(() {
-          // The button that is tapped is set to true, and the others to false.
-          for (int i = 0; i < selectedCoach.length; i++) {
+          for (int i = 0; i < availableCoach.length; i++) {
             selectedCoach[i] = i == index;
           }
-          int coachNo = index + 1;
-          selectCoachNo = '$coachPrefix$coachNo';
+          int coachNo = index;
+          selectCoachNo = '$coachPrefix${availableCoach[coachNo][1]}';
         });
       },
       borderRadius: const BorderRadius.all(Radius.circular(8)),
@@ -332,7 +316,7 @@ class _HomeScreenState extends State<HomeScreen> {
         minWidth: 40,
       ),
       isSelected: selectedCoach,
-      children: availableCoach,
+      children: widgetList,
     );
   }
 
@@ -346,7 +330,7 @@ class _HomeScreenState extends State<HomeScreen> {
         const SizedBox(
           height: 20,
         ),
-        chartType == 2
+        isChat2
             ? const Text('Showing fresh data')
             : const Text(
                 'Showing 1st chart, some seats might have been booked. Hope you select the vacant seat.\nBest of luck 🍀',
